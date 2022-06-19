@@ -16,7 +16,7 @@ import datetime
 import platform
 import asyncio
 
-your_channel = 969581152950169664
+your_channel = "Токен вашего канала int"
 
 if platform.system() == 'Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
