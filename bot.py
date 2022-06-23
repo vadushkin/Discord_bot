@@ -60,12 +60,12 @@ def face_analyze(img_path):
         age = result_dict.get("age")
         gender = result_dict.get("gender")
         sorted_tuples = sorted(result_dict.get('race').items(), key=lambda item: item[1], reverse=True)
-        sorted_dict = {k: v for k, v in sorted_tuples}
+        sorted_dict = {item: value for item, value in sorted_tuples}
         for item, value in sorted_dict.items():
             sorted_dict[item] = round(value, 1)
         race = sorted_dict
         sorted_tuples = sorted(result_dict.get('emotion').items(), key=lambda item: item[1], reverse=True)
-        sorted_dict2 = {k: v for k, v in sorted_tuples}
+        sorted_dict2 = {item: value for item, value in sorted_tuples}
         for item, value in sorted_dict2.items():
             sorted_dict2[item] = round(value, 1)
         emotions = sorted_dict2
