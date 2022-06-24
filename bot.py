@@ -49,7 +49,7 @@ def quote():
 
 
 def random_anime_picture():
-    """Выбирает цитату"""
+    """Выбирает фотографию"""
     page = random.randint(1, 5000)
     url = f'https://anime-pictures.net/pictures/view_posts/{page}'
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
