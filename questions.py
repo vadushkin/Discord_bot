@@ -40,7 +40,8 @@ hi_from_bot = ['Я норм', 'https://tenor.com/view/funny-animals-dog-dance-cu
                'https://tenor.com/view/flying-kiss---emoji-kisses-kiss-flying-kiss-emoji-gif-9773129704277416768']
 
 kak_dela_from_bot = ['Хреношо',
-                     'А как у меня дела, по-твоему? Я читала любимую книгу, а теперь пришлось отвлечься из-за некоторых… (ПИДОНРАСОВ)',
+                     'А как у меня дела, по-твоему? Я читала любимую книгу, а теперь пришлось отвлечься из-за '
+                     'некоторых… (ПИДОНРАСОВ)',
                      'А ну их на фиг, эти дела, давай следующий вопрос! уёбок :)',
                      'Дела лучше всех, вот пытаюсь мир захватить…',
                      'Дела мои отлично! Жду дальнейших расспросов о своей личной жизни!',
@@ -53,10 +54,10 @@ kak_dela_from_bot = ['Хреношо',
                      'спать негры', 'норм, ты как?', 'я тебе не женщина - я человек', 'ну эээээ, заебитлс',
                      'клеш рояль?',
                      'Как в Донбасе — с женой живут, а я в запасе.',
-                     'Мои дела супер! Настроение отличное как раз для прогулки! Не составите мне компанию прыгнуть с крыши????']
+                     'Мои дела супер! Настроение отличное как раз для прогулки! Не составите мне компанию прыгнуть с '
+                     'крыши????']
 
 dict_links_for_img = {
-    "anime": "animu/pat",
     "anime_pat": "animu/pat",
     "anime_hug": "animu/hug",
     "anime_wink": "animu/wink",
@@ -77,14 +78,20 @@ dict_animal = {
 }
 
 dict_help_bot = {
-    "$help": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
-    "$помощь": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
+    "$help": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes"
+             "\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
+    "$помощь": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes"
+               "\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
 
-    "$help_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или слова только обязательно отделите их запятой!",
-    "$помощь_с_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или слова только обязательно отделите их запятой!",
+    "$help_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или слова "
+                    "только обязательно отделите их запятой!",
+    "$помощь_с_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или "
+                        "слова только обязательно отделите их запятой!",
 
-    "$help_$dem": "ваша фотография и любой текст\nЕсли хотите, можете указать к '$dem' сдоло или предложение/я только обязательно отделите их запятой!",
-    "$помощь_с_$dem": "ваша фотография и любой текст\nЕсли хотите, можете указать к '$dem' слово или предложение/я только обязательно отделите их запятой!",
+    "$help_$dem": "ваша фотография и любой текст\nЕсли хотите, можете указать к '$dem' сдоло или предложение/я только "
+                  "обязательно отделите их запятой!",
+    "$помощь_с_$dem": "ваша фотография и любой текст\nЕсли хотите, можете указать к '$dem' слово или предложение/я "
+                      "только обязательно отделите их запятой!",
 
     "$help_$analyze_photo": "укажите мне фотографию, обязательно где хорошо видно лицо и я покажу член (шутка)",
     "$помощь_с_$analyze_photo": "укажите мне фотографию, обязательно где хорошо видно лицо и я покажу член (шутка)",
@@ -107,14 +114,21 @@ dict_help_bot = {
     '$game': "$Гартик, $Гартик_ио, $Монополия, $Уно",
     '$игры': "$Гартик, $Гартик_ио, $Монополия, $Уно",
 
-    "$фильтр_для_фото": "$brightness\n$invert_greyscale\n$invert\n$greyscale\n$threshold\n$sepia\n$red\n$green\n$blue\n$blurple",
-    "$photo_filter": "$brightness\n$invert_greyscale\n$invert\n$greyscale\n$threshold\n$sepia\n$red\n$green\n$blue\n$blurple",
+    "$фильтр_для_фото": "$brightness\n$invert_greyscale\n$invert\n$greyscale\n$threshold\n$sepia\n$red\n$green\n$blue"
+                        "\n$blurple",
+    "$photo_filter": "$brightness\n$invert_greyscale\n$invert\n$greyscale\n$threshold\n$sepia\n$red\n$green\n$blue"
+                     "\n$blurple",
 
-    '$поменять_фотографию': 'Вместе с тегом приложите фотографию\n$jail\n$mission_passed\n$wasted\n$glass\n$gay\n$comrade\n$triggered\n$blur\n$pixelate\n$simpcard\n$lolice\n$lesbian\n$nonbinary\n$bisexual',
-    '$photo_changes': 'Вместе с тегом приложите фотографию\n$jail\n$mission_passed\n$wasted\n$glass\n$gay\n$comrade\n$triggered\n$blur\n$pixelate\n$simpcard\n$lolice\n$lesbian\n$nonbinary\n$bisexual',
+    '$поменять_фотографию': 'Вместе с тегом приложите фотографию\n$jail\n$mission_passed\n$wasted\n$glass\n$gay'
+                            '\n$comrade\n$triggered\n$blur\n$pixelate\n$simpcard\n$lolice\n$lesbian\n$nonbinary'
+                            '\n$bisexual',
+    '$photo_changes': 'Вместе с тегом приложите фотографию\n$jail\n$mission_passed\n$wasted\n$glass\n$gay\n$comrade'
+                      '\n$triggered\n$blur\n$pixelate\n$simpcard\n$lolice\n$lesbian\n$nonbinary\n$bisexual',
 
-    '$photo': """$anime\n$anime_pat\n$anime_hug\n$anime_wink\n$anime_quote\n$anime_face_palm\n$dog\n$cat\n$panda\n$panda_red\n$bird\n$fox\n$koala\n$raccoon\n$kangaroo\n$pikachu""",
-    '$фото': """$anime\n$anime_pat\n$anime_hug\n$anime_wink\n$anime_quote\n$anime_face_palm\n$dog\n$cat\n$panda\n$panda_red\n$bird\n$fox\n$koala\n$raccoon\n$kangaroo\n$pikachu"""
+    '$photo': "$anime\n$anime_pat\n$anime_hug\n$anime_wink\n$anime_quote\n$anime_face_palm\n$dog\n$cat\n$panda"
+              "\n$panda_red\n$bird\n$fox\n$koala\n$raccoon\n$kangaroo\n$pikachu",
+    '$фото': "$anime\n$anime_pat\n$anime_hug\n$anime_wink\n$anime_quote\n$anime_face_palm\n$dog\n$cat\n$panda"
+             "\n$panda_red\n$bird\n$fox\n$koala\n$raccoon\n$kangaroo\n$pikachu "
 }
 
 startswith_word = ['=', '#', '$', '!', '№', '%', '^', '&', '?']
