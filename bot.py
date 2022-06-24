@@ -48,6 +48,33 @@ def quote():
     return embed
 
 
+def random_anime_picture():
+    """Выбирает цитату"""
+    page = random.randint(1, 5000)
+    url = f'https://anime-pictures.net/pictures/view_posts/{page}'
+    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                             'Chrome/100.0.4896.160 YaBrowser/22.5.3.684 Yowser/2.5 Safari/537.36'}
+    response = requests.get(url=url, headers=headers)
+    soup = bs4.BeautifulSoup(response.text, 'lxml')
+    number_random_picture = random.randint(1, 60)
+    photo_url = soup.find_all('span', class_='img_block_big')[number_random_picture].find('a').get('href')
+    url = f"https://anime-pictures.net{photo_url}"
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/100.0.4896.160 YaBrowser/22.5.3.684 Yowser/2.5 Safari/537.36'
+    }
+    response = requests.get(url=url, headers=headers)
+    soup = bs4.BeautifulSoup(response.text, 'lxml')
+    full_photo_url = soup.find_all('img', id='big_preview')[0].get('src')
+    url_photo = f"https:{full_photo_url}"
+    embed = discord.Embed(
+        title='Аниме',
+        color=0xff9900,
+    )
+    embed.set_image(url=url_photo)
+    return embed
+
+
 def face_analyze(img_path):
     """Анализ лица"""
     try:
@@ -60,12 +87,12 @@ def face_analyze(img_path):
         age = result_dict.get("age")
         gender = result_dict.get("gender")
         sorted_tuples = sorted(result_dict.get('race').items(), key=lambda item: item[1], reverse=True)
-        sorted_dict = {k: v for k, v in sorted_tuples}
+        sorted_dict = {key: value for key, value in sorted_tuples}
         for item, value in sorted_dict.items():
             sorted_dict[item] = round(value, 1)
         race = sorted_dict
         sorted_tuples = sorted(result_dict.get('emotion').items(), key=lambda item: item[1], reverse=True)
-        sorted_dict2 = {k: v for k, v in sorted_tuples}
+        sorted_dict2 = {key: value for key, value in sorted_tuples}
         for item, value in sorted_dict2.items():
             sorted_dict2[item] = round(value, 1)
         emotions = sorted_dict2
@@ -210,10 +237,25 @@ async def on_message(message):
             base.commit()
 
         if client.user.mentioned_in(message) or random.randint(0, 20) == 10:
-            sqlite_select_query = """SELECT * from messages ORDER BY RANDOM() LIMIT 1;"""
-            cursor.execute(sqlite_select_query)
-            records = cursor.fetchone()
-            await message.channel.send(records[1])
+            if random.randint(0, 10) == 1:
+                url = servant.looking_for_a_link()
+                img_data = requests.get(url).content
+                time_now = today.strftime("%Y-%m-%d-%H.%M.%S").replace('.', '-')
+                with open(f'photo_demotivator/{time_now}.jpeg', 'wb') as handler:
+                    handler.write(img_data)
+                photos = servant.photo_change('', f'photo_demotivator/{time_now}.jpeg')
+                with open(f'{photos}', 'rb') as file:
+                    picture = discord.File(file)
+                    await message.channel.send(file=picture)
+            else:
+                sqlite_select_query = """SELECT * from messages ORDER BY RANDOM() LIMIT 1;"""
+                cursor.execute(sqlite_select_query)
+                records = cursor.fetchone()
+                await message.channel.send(records[1])
+
+        if message_content_lower == 'anime':
+            embed = random_anime_picture()
+            await message.channel.send(embed=embed)
 
         if message_content_lower[:3] == 'dem' or message_content_lower[:5] == 'r_dem':
             if len(re.findall(r'https?://\S+\'', str(message_attachments))) == 1 and message_content_lower[:3] == 'dem':
