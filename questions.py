@@ -78,10 +78,12 @@ dict_animal = {
 }
 
 dict_help_bot = {
-    "$help": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes"
-             "\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
-    "$помощь": "$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes"
-               "\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
+    "$help": "$start_game\n$a/w/s/d\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke"
+             "\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem"
+             "\n$r_dem",
+    "$помощь": "$start_game\n$a/w/s/d\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke"
+               "\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem"
+               "\n$r_dem",
 
     "$help_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или слова "
                     "только обязательно отделите их запятой!",

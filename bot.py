@@ -16,6 +16,7 @@ import re
 import datetime
 import platform
 import asyncio
+import game_2048
 
 your_channel = "Your channel"
 
@@ -26,6 +27,8 @@ translator = Translator()
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
+
+screen_for_game = "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
 
 
 def quote():
@@ -48,8 +51,8 @@ def quote():
     return embed
 
 
-def random_anime_picture():
-    """Выбирает цитату"""
+def to_return_a_random_anime_picture():
+    """Выбирает фотографию"""
     page = random.randint(1, 5000)
     url = f'https://anime-pictures.net/pictures/view_posts/{page}'
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -59,10 +62,6 @@ def random_anime_picture():
     number_random_picture = random.randint(1, 60)
     photo_url = soup.find_all('span', class_='img_block_big')[number_random_picture].find('a').get('href')
     url = f"https://anime-pictures.net{photo_url}"
-    headers = {
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/100.0.4896.160 YaBrowser/22.5.3.684 Yowser/2.5 Safari/537.36'
-    }
     response = requests.get(url=url, headers=headers)
     soup = bs4.BeautifulSoup(response.text, 'lxml')
     full_photo_url = soup.find_all('img', id='big_preview')[0].get('src')
@@ -73,6 +72,30 @@ def random_anime_picture():
     )
     embed.set_image(url=url_photo)
     return embed
+
+
+def to_return_a_random_hentai():
+    """Возвращает рандомное видео"""
+    while True:
+        number_page = random.randint(1, 158)
+        url = f"https://gifsauce.com/r/HENTAI_GIF?page={number_page}"
+        headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/100.0.4896.160 YaBrowser/22.5.3.684 Yowser/2.5 Safari/537.36'}
+        response = requests.get(url=url, headers=headers)
+        soup = bs4.BeautifulSoup(response.text, 'lxml')
+        videos = soup.find_all("div", class_="itemgif relative pb-13/12 group bg-palette-1")
+        random_number_video = random.randint(1, len(videos) - 1)
+        video = videos[random_number_video].find('a').get('href')
+        video_full_url = f"https://gifsauce.com{video}"
+        response2 = requests.get(url=video_full_url, headers=headers)
+        soup2 = bs4.BeautifulSoup(response2.text, 'lxml')
+        video_block = soup2.find_all('div', class_='absolute h-full w-full object-cover block')[0].find('video')
+        url_video = re.findall(r'src="(.*?)"', str(video_block))[0]
+        if url_video[:23] == 'https://i.gifsauce.com/':
+            continue
+        else:
+            return url_video
 
 
 def face_analyze(img_path):
@@ -155,7 +178,8 @@ def random_anecdotes():
     # text = ''
     # link = requests.get('http://anekdotme.ru/random')
     # b = bs4.BeautifulSoup(link.text, "html.parser")
-    # text_for_anecdote = b.select('.anekdot_text')
+    # text_for_anecdote = b.selec
+    # t('.anekdot_text')
     # for symbol in text_for_anecdote:
     #     text = (symbol.getText().strip())
     #     string_for_anecdote = string_for_anecdote + text + '\n\n'
@@ -178,7 +202,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
     global base, cursor
-    base = sqlite3.connect('DataBase.sqlite3')
+    base = sqlite3.connect('Аркадий.sqlite3')
     cursor = base.cursor()
     if base:
         print('DataBase connected...OK')
@@ -210,6 +234,7 @@ async def on_message(message):
         message_content_lower = message_content_lower_with_prefix[1:]
         message_attachments = message.attachments
         message_guild_name = message.guild.name
+        message_guild_id = message.guild.id
         message_author = message.author
 
         if message_attachments:
@@ -220,7 +245,8 @@ async def on_message(message):
         else:
             print(f"Сервер: {message_guild_name}, Дата: {time.ctime()}, {message_author} : {message_content}")
 
-        if not (message_content[:1] in startswith_word) and not message_author.bot:
+        if not (message_content[
+                :1] in startswith_word) and not message_author.bot and message_content != '<@969578689534787618>':
             base.execute('CREATE TABLE IF NOT EXISTS messages (userid INT, content STRING, links INT)')
             base.commit()
             if len(re.findall(r'https?://\S+.png|.jpeg|.jpg\'', str(message_attachments))) == 1:
@@ -254,8 +280,64 @@ async def on_message(message):
                 await message.channel.send(records[1])
 
         if message_content_lower == 'anime':
-            embed = random_anime_picture()
+            embed = to_return_a_random_anime_picture()
             await message.channel.send(embed=embed)
+
+        if message_content_lower_with_prefix == "$hentai":
+            url = to_return_a_random_hentai()
+            await message.channel.send(url)
+
+        if message_content == '$start_game':
+            base.execute(
+                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
+            base.commit()
+            cursor.execute(f"SELECT * FROM games WHERE open = 'open' AND server_id = {message_guild_id}")
+            records = cursor.fetchone()
+            if records:
+                screen, score, moved, move = game_2048.key_handler('none', records[2],
+                                                                   records[3], records[4], records[5])
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+            else:
+                cursor.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)",
+                               (int(message_guild_id), str('open'), screen_for_game, int(0), True, True))
+                base.commit()
+                screen, score, moved, move = game_2048.start_game_2048(screen_for_game, 0, True, True)
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                cursor.execute(
+                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'open') AND (server_id == {message_guild_id})")
+                base.commit()
+                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+
+        if message_content_lower_with_prefix in ['$a', '$w', '$s', '$d']:
+            base.execute(
+                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
+            base.commit()
+            cursor.execute(f"SELECT * FROM games WHERE open = 'open' AND server_id = {message_guild_id}")
+            records = cursor.fetchone()
+            if records:
+                screen, score, moved, move = game_2048.key_handler(message_content_lower_with_prefix[1], records[2],
+                                                                   records[3], records[4], records[5])
+                check_lose_or_win = game_2048.to_check_win_or_lose(screen)
+                screen, score, moved, move = game_2048.add_new_field(screen, score, moved, move)
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                cursor.execute(
+                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'open') AND (server_id == {message_guild_id})")
+                base.commit()
+                if check_lose_or_win == "Win":
+                    cursor.execute(f"UPDATE games SET open = 'Close' WHERE server_id = {message_guild_id}")
+                    base.commit()
+                    await message.channel.send(
+                        "Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
+                elif check_lose_or_win == "Lose":
+                    cursor.execute(f'UPDATE games SET open = "Close" WHERE server_id = {message_guild_id}')
+                    base.commit()
+                    await message.channel.send("Score: " + str(
+                        score) + "\n" + screen + "Вы проиграли... Я болел за вас( Можете попробовать еще раз!")
+                else:
+                    await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+            else:
+                await message.channel.send("Создайте игру с помощью $start_game")
 
         if message_content_lower[:3] == 'dem' or message_content_lower[:5] == 'r_dem':
             if len(re.findall(r'https?://\S+\'', str(message_attachments))) == 1 and message_content_lower[:3] == 'dem':
