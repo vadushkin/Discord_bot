@@ -1,18 +1,3 @@
-import random
-from googletrans import Translator
-
-translator = Translator()
-
-
-def random_words():
-    chars = '+-/*!&$#?=@<>abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-    number, length = 1, 20
-    password = ''
-    for i in range(length):
-        password += random.choice(chars)
-    return password
-
-
 question_for_kek_dela = ["как дела", "как дела?", "cock дела?", "cock дела", "как дела бот?", "как дела ботик",
                          'как дела ботик?', 'как дела черт?', 'как дела <@969578689534787618>', 'как сам?',
                          'как дела? <@969578689534787618>', 'дела? <@969578689534787618>', 'дела норм?', 'как сам',
@@ -78,12 +63,32 @@ dict_animal = {
 }
 
 dict_help_bot = {
-    "$help": "$start_game\n$a/w/s/d\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke"
-             "\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem"
-             "\n$r_dem",
-    "$помощь": "$start_game\n$a/w/s/d\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno\n$Gartic_io\n$Quote\n$Your_quote\n$Photo\n$Joke"
-               "\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary\n$Id_photos\n$Analyze_photo\n$dem"
-               "\n$r_dem",
+    "$help": "$start_game\n$a/w/s/d\n$stat_games\n$game_help\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno"
+             "\n$Gartic_io "
+             "\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary"
+             "\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
+
+    "$помощь": "$start_game\n$a/w/s/d\n$stat_games\n$game_help\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno"
+               "\n$Gartic_io "
+               "\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet"
+               "\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
+
+    "$game_help": "Это игра в 2048 только за животных) Животные стоят все по разному, вот пример очков за каждого "
+                  "животного: \n 0: 🐞 \n"
+                  "2: 🐶 \n"
+                  "4: 🐱 \n"
+                  "8: 🐭 \n"
+                  "16: 🐹 \n"
+                  "32: 🐰 \n"
+                  "64: 🦊 \n"
+                  "128: 🐻 \n"
+                  "256: 🐼 \n"
+                  "512: 🐘 \n"
+                  "1024: 🐨 \n"
+                  "2048: 🐷 \n"
+                  "Чтобы управлять животными используйте $w - вперёд, $a - влево, $d - вправо, $s - назад\n"
+                  "При объединении двух одинаковых животных они превращаются в 1, более ценный\n"
+                  "Чтобы выиграть, нужно набрать 2048 очков, то есть получить 🐷",
 
     "$help_$r_dem": "рандомная фотография и любой текст\nЕсли хотите, можете указать к '$r_dem' предложение или слова "
                     "только обязательно отделите их запятой!",

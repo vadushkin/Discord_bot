@@ -262,6 +262,78 @@ async def on_message(message):
                 cursor.execute('INSERT INTO messages VALUES(?, ?, ?)', (message_author.id, message_content, 2))
             base.commit()
 
+        if message_content == '$start_game':
+            base.execute(
+                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
+            base.commit()
+            cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
+            records = cursor.fetchone()
+            if records:
+                screen, score, moved, move = game_2048.key_handler('none', records[2],
+                                                                   records[3], records[4], records[5])
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+            else:
+                cursor.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)",
+                               (int(message_guild_id), str('Открыта'), screen_for_game, int(0), True, True))
+                base.commit()
+                screen, score, moved, move = game_2048.start_game_2048(screen_for_game, 0, True, True)
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                cursor.execute(
+                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'Открыта') AND (server_id == {message_guild_id})")
+                base.commit()
+                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+
+        if message_content == '$stat_games':
+            base.execute(
+                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
+            base.commit()
+            cursor.execute(f"SELECT * FROM games WHERE server_id = {message_guild_id} ORDER BY score DESC LIMIT 10")
+            records = cursor.fetchall()
+            if records:
+                masters = "Максимум очков в игре: \n"
+                for item in records:
+                    masters += "Игра: " + str(item[1]) + ", " + "Очки: " + str(item[3]) + "\n"
+                cursor.execute(
+                    f"SELECT COUNT(*) FROM games WHERE (open == 'Выигрыш') AND server_id = {message_guild_id}")
+                records = cursor.fetchone()
+                winners = "Победы: \n"
+                if records:
+                    winners += str(records[0])
+                await message.channel.send(masters + winners)
+            else:
+                await message.channel.send("Пока что игр не создано")
+
+        if message_content_lower_with_prefix in ['$a', '$w', '$s', '$d']:
+            base.execute(
+                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
+            base.commit()
+            cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
+            records = cursor.fetchone()
+            if records:
+                screen, score, moved, move = game_2048.key_handler(message_content_lower_with_prefix[1], records[2],
+                                                                   records[3], records[4], records[5])
+                check_lose_or_win = game_2048.to_check_win_or_lose(screen)
+                screen, score, moved, move = game_2048.add_new_field(screen, score, moved, move)
+                screen, score, animal_stile = game_2048.prtScreen(screen, score)
+                cursor.execute(
+                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'Открыта') AND (server_id == {message_guild_id})")
+                base.commit()
+                if check_lose_or_win == "Win":
+                    cursor.execute(f"UPDATE games SET open = 'Выигрыш' WHERE server_id = {message_guild_id}")
+                    base.commit()
+                    await message.channel.send(
+                        "Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
+                elif check_lose_or_win == "Lose":
+                    cursor.execute(f'UPDATE games SET open = "Проигрыш" WHERE server_id = {message_guild_id}')
+                    base.commit()
+                    await message.channel.send("Score: " + str(
+                        score) + "\n" + animal_stile + "Вы проиграли... Я болел за вас( Можете попробовать еще раз!")
+                else:
+                    await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+            else:
+                await message.channel.send("Создайте игру с помощью $start_game")
+
         if client.user.mentioned_in(message) or random.randint(0, 20) == 10:
             if random.randint(0, 10) == 1:
                 url = servant.looking_for_a_link()
@@ -286,58 +358,6 @@ async def on_message(message):
         if message_content_lower_with_prefix == "$hentai":
             url = to_return_a_random_hentai()
             await message.channel.send(url)
-
-        if message_content == '$start_game':
-            base.execute(
-                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
-            base.commit()
-            cursor.execute(f"SELECT * FROM games WHERE open = 'open' AND server_id = {message_guild_id}")
-            records = cursor.fetchone()
-            if records:
-                screen, score, moved, move = game_2048.key_handler('none', records[2],
-                                                                   records[3], records[4], records[5])
-                screen, score, animal_stile = game_2048.prtScreen(screen, score)
-                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
-            else:
-                cursor.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)",
-                               (int(message_guild_id), str('open'), screen_for_game, int(0), True, True))
-                base.commit()
-                screen, score, moved, move = game_2048.start_game_2048(screen_for_game, 0, True, True)
-                screen, score, animal_stile = game_2048.prtScreen(screen, score)
-                cursor.execute(
-                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'open') AND (server_id == {message_guild_id})")
-                base.commit()
-                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
-
-        if message_content_lower_with_prefix in ['$a', '$w', '$s', '$d']:
-            base.execute(
-                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  moved BOOLEAN, move BOOLEAN)')
-            base.commit()
-            cursor.execute(f"SELECT * FROM games WHERE open = 'open' AND server_id = {message_guild_id}")
-            records = cursor.fetchone()
-            if records:
-                screen, score, moved, move = game_2048.key_handler(message_content_lower_with_prefix[1], records[2],
-                                                                   records[3], records[4], records[5])
-                check_lose_or_win = game_2048.to_check_win_or_lose(screen)
-                screen, score, moved, move = game_2048.add_new_field(screen, score, moved, move)
-                screen, score, animal_stile = game_2048.prtScreen(screen, score)
-                cursor.execute(
-                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} WHERE (open == 'open') AND (server_id == {message_guild_id})")
-                base.commit()
-                if check_lose_or_win == "Win":
-                    cursor.execute(f"UPDATE games SET open = 'Close' WHERE server_id = {message_guild_id}")
-                    base.commit()
-                    await message.channel.send(
-                        "Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
-                elif check_lose_or_win == "Lose":
-                    cursor.execute(f'UPDATE games SET open = "Close" WHERE server_id = {message_guild_id}')
-                    base.commit()
-                    await message.channel.send("Score: " + str(
-                        score) + "\n" + screen + "Вы проиграли... Я болел за вас( Можете попробовать еще раз!")
-                else:
-                    await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
-            else:
-                await message.channel.send("Создайте игру с помощью $start_game")
 
         if message_content_lower[:3] == 'dem' or message_content_lower[:5] == 'r_dem':
             if len(re.findall(r'https?://\S+\'', str(message_attachments))) == 1 and message_content_lower[:3] == 'dem':
