@@ -13,7 +13,7 @@ num512 = "512"
 num1024 = "1024"
 num2048 = "2048"
 
-animal = {
+animals = {
     "0": "🐞",
     "2": '🐶',
     "4": '🐱',
@@ -34,7 +34,7 @@ def prtScreen(screen, score):
     animal_stile = ""
     for row in screen:
         for item in row:
-            animal_stile += animal[item] + " "
+            animal_stile += animals[item] + " "
             rows = rows + item + " "
         if row:
             rows += "\n"
