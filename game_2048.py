@@ -49,18 +49,23 @@ row4 = 10
 
 
 def start_game_2048(screen, score, moved, move):
-    d = screen.split()
+    
+    screen_copy_on_split = screen.split()
     screen = []
+    
     for i in range(12):
         screen.append([])
-    s = [[0, 1, 2, 3],
+        
+    fields = [[0, 1, 2, 3],
          [4, 5, 6, 7],
          [8, 9, 10, 11],
          [12, 13, 14, 15]]
     numbers = [1, 4, 7, 10]
-    for i in range(4):
-        for k in range(4):
-            screen[numbers[i]].append(d[s[i][k]])
+    
+    for row in range(4):
+        for place in range(4):
+            screen[numbers[row]].append(screen_copy_on_split[fields[row][place]])
+            
     if not score:
         score = 0
     else:
@@ -104,22 +109,28 @@ def add_new_field(screen, score, moved, move):
 
 
 def key_handler(keypress, screen, score, moved, move):
-    d = screen.split()
+    
+    screen_copy_on_split = screen.split()
     screen = []
+    
     for i in range(12):
         screen.append([])
-    s = [[0, 1, 2, 3],
+        
+    fields = [[0, 1, 2, 3],
          [4, 5, 6, 7],
          [8, 9, 10, 11],
          [12, 13, 14, 15]]
     numbers = [1, 4, 7, 10]
-    for i in range(4):
-        for k in range(4):
-            screen[numbers[i]].append(d[s[i][k]])
+    
+    for row in range(4):
+        for place in range(4):
+            screen[numbers[row]].append(screen_copy_on_split[fields[row][place]])
+            
     if not score:
         score = 0
     else:
         score = score
+        
     if keypress == "d":
         for loops in range(3):
             for row in [1, 4, 7, 10]:
