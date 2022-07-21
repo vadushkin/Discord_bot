@@ -83,3 +83,6 @@ Werkzeug==2.1.2
 wrapt==1.14.1
 yarl==1.7.2
 zipp==3.8.0
+
+simpledemotivators~=2.1.1
+pyrandmeme~=0.0.6
