@@ -174,18 +174,34 @@ def photo(string, msg2):
 
 def random_anecdotes():
     """Рандомный анекдот"""
-    # string_for_anecdote = ''
-    # text = ''
-    # link = requests.get('http://anekdotme.ru/random')
-    # b = bs4.BeautifulSoup(link.text, "html.parser")
-    # text_for_anecdote = b.selec
-    # t('.anekdot_text')
-    # for symbol in text_for_anecdote:
-    #     text = (symbol.getText().strip())
-    #     string_for_anecdote = string_for_anecdote + text + '\n\n'
+    url = 'https://anekdoty.ru/'
+    ua = UserAgent()
+    headers = {
+        'User-Agent': ua.random
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        soup = bs4.BeautifulSoup(response.text, 'lxml')
+        names_categories = soup.find("div", class_="drop").find_all('a')
+        list_names = []
+        for name in names_categories:
+            list_names.append(name.get('href'))
+        random_anecdote_url_category = random.choice(list_names)
+        response = requests.get(random_anecdote_url_category, headers=headers)
+        soup = bs4.BeautifulSoup(response.text, 'lxml')
+        number_all_anecdotes = int(soup.find("div", class_="pagination-holder-result").text.split()[1]) // 20
+        category = soup.find("div", class_='description content-blocks').text.strip()
+        number_pagination = random.randint(1, number_all_anecdotes)
+        random_anecdote_url = random_anecdote_url_category + 'page/' + str(number_pagination) + '/'
+        response = requests.get(random_anecdote_url, headers=headers)
+        soup = bs4.BeautifulSoup(response.text, 'lxml')
+        anecdote = soup.find("div", class_="content-block section").find_all(
+            'div', class_='holder-body')[0].text.strip()
+        return [anecdote, category]
 
-    # return text
-    return "Извините, но сайт закрыли, без анекдотов("
+    except Exception as _ex:
+        print(_ex)
+        return "Нету анекдотов ((("
 
 
 async def get_input_of_type(func, message):
@@ -526,7 +542,8 @@ async def on_message(message):
                 await message.channel.send("Попробуйте ещё раз")
 
         if message_content_lower in word_from_anekdot:
-            await message.channel.send(random_anecdotes())
+            anecdote, category = random_anecdotes()
+            await message.channel.send(f"Категория: {category}\nАнекдот: {anecdote}")
 
         if message_content_lower_with_prefix == 'умница' or message_content_lower_with_prefix == 'умничка':
             await message.channel.send("Знаю)")
