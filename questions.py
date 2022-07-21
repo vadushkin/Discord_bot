@@ -64,12 +64,12 @@ dict_animal = {
 
 dict_help_bot = {
     "$help": "$start_game\n$a/w/s/d\n$stat_games\n$game_help\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno"
-             "\n$Gartic_io "
+             "\n$Gartic_io\nMeme"
              "\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet\n$Binary"
              "\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
 
     "$помощь": "$start_game\n$a/w/s/d\n$stat_games\n$game_help\n$Anime\n$Hentai\n$Anecdote\n$Monopoly\n$Gartic\n$Uno"
-               "\n$Gartic_io "
+               "\n$Gartic_io\nMeme"
                "\n$Quote\n$Your_quote\n$Photo\n$Joke\n$Photo_changes\n$Photo_filter\n$Youtube_comment\n$Tweet"
                "\n$Binary\n$Id_photos\n$Analyze_photo\n$dem\n$r_dem",
 
