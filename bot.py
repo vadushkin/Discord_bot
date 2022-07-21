@@ -5,6 +5,7 @@ from googletrans import Translator
 from deepface import DeepFace
 from photo_demotivator import servant
 from config import TOKEN
+from pyrandmeme import *
 import time
 import sqlite3
 import json
@@ -540,7 +541,10 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
             except KeyError:
                 await message.channel.send("Попробуйте ещё раз")
-
+        
+        if message_content_lower == 'meme':
+            await message.channel.send(embed=await pyrandmeme())
+            
         if message_content_lower in word_from_anekdot:
             anecdote, category = random_anecdotes()
             await message.channel.send(f"Категория: {category}\nАнекдот: {anecdote}")
