@@ -19,7 +19,8 @@ import platform
 import asyncio
 import game_2048
 
-your_channel = "Your channel"
+your_channel = 10000000000
+your_server = 10000000000
 
 if platform.system() == 'Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -227,17 +228,30 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(your_channel)
+    if member.guild.id == your_server:
+        channel = client.get_channel(563668199389003779)
+    else:
+        channel = client.get_channel(your_channel)
     embed = discord.Embed(
-        title="Добро пожаловать на сервер!",
+        title=f"Приветик {member.name}!",
+        description="Здесь весело :)",
     )
-    await channel.send(f"Приветик {member.name}!", embed=embed)
+    embed.set_image(
+        url="https://fotointeres.ru/wp-content/uploads/2012/04/0_827f9_58eba125_orig.jpg")
+    await channel.send("Добро пожаловать на сервер!", embed=embed)
 
 
 @client.event
 async def on_member_remove(member):
-    channel = client.get_channel(your_channel)
-    await channel.send(f"Прощай {member.name}!")
+    if member.guild.id == your_channel:
+        channel = client.get_channel(your_channel)
+    else:
+        channel = client.get_channel(your_channel)
+    embed = discord.Embed(
+        title=f"{member.name}! Покидает сервер...",
+    )
+    embed.set_image(url=member.avatar_url)
+    await channel.send(f"Ушёл в далёкий путь, удачи ему!", embed=embed)
 
 
 @client.event
