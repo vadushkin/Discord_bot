@@ -229,7 +229,7 @@ async def on_ready():
 @client.event
 async def on_member_join(member):
     if member.guild.id == your_server:
-        channel = client.get_channel(563668199389003779)
+        channel = client.get_channel(your_channel)
     else:
         channel = client.get_channel(your_channel)
     embed = discord.Embed(
@@ -278,19 +278,25 @@ async def on_message(message):
 
         if not (message_content[
                 :1] in startswith_word) and not message_author.bot and message_content != '<@"Your discord bot id">':
+            
             base.execute('CREATE TABLE IF NOT EXISTS messages (userid INT, content STRING, links INT)')
             base.commit()
+            
             if len(re.findall(r'https?://\S+.png|.jpeg|.jpg\'', str(message_attachments))) == 1:
                 url = re.findall(r'https?://\S+\'', str(message_attachments))
                 cursor.execute('INSERT INTO messages VALUES(?, ?, ?)', (message_author.id, url[0][:-1], 1))
+                
             elif len(re.findall(r'https?://\S+.png|.jpeg|.jpg\'', str(message_attachments))) > 1:
                 for urls in re.findall(r'https?://\S+\'', str(message_attachments)):
                     cursor.execute('INSERT INTO messages VALUES(?, ?, ?)', (message_author.id, urls[:-1], 1))
+                    
             elif len(re.findall(r'https?://\S+', str(message_content))) == 1:
                 for urls in re.findall(r'https?://\S+', str(message_content)):
                     cursor.execute('INSERT INTO messages VALUES(?, ?, ?)', (message_author.id, urls[:-1], 0))
+                    
             elif message_content != '':
                 cursor.execute('INSERT INTO messages VALUES(?, ?, ?)', (message_author.id, message_content, 2))
+                
             base.commit()
                 
         if message_content == '$start_game':
@@ -300,11 +306,13 @@ async def on_message(message):
             base.commit()
             cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
             records = cursor.fetchone()
+            
             if records:
                 screen, score, moved, move = game_2048.key_handler('none', records[2],
                                                                    records[3], records[4], records[5])
                 screen, score, animal_stile = game_2048.prtScreen(screen, score)
                 await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+                
             else:
                 cursor.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)",
                                (int(message_guild_id), str('Открыта'), screen_for_game, int(0), True, True))
@@ -323,6 +331,7 @@ async def on_message(message):
             base.commit()
             cursor.execute(f"SELECT * FROM games WHERE server_id = {message_guild_id} ORDER BY score DESC LIMIT 10")
             records = cursor.fetchall()
+            
             if records:
                 masters = "Максимум очков в игре: \n"
                 for item in records:
@@ -331,9 +340,11 @@ async def on_message(message):
                     f"SELECT COUNT(*) FROM games WHERE (open == 'Выигрыш') AND server_id = {message_guild_id}")
                 records = cursor.fetchone()
                 winners = "Победы: \n"
+                
                 if records:
                     winners += str(records[0])
                 await message.channel.send(masters + winners)
+                
             else:
                 await message.channel.send("Пока что игр не создано")
 
@@ -344,6 +355,7 @@ async def on_message(message):
             base.commit()
             cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
             records = cursor.fetchone()
+            
             if records:
                 screen, score, moved, move = game_2048.key_handler(message_content_lower_with_prefix[1], records[2],
                                                                    records[3], records[4], records[5])
@@ -354,12 +366,14 @@ async def on_message(message):
                     f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} "
                     f"WHERE (open == 'Открыта') AND (server_id == {message_guild_id})")
                 base.commit()
+                
                 if check_lose_or_win == "Win":
                     cursor.execute(f"UPDATE games SET open = 'Выигрыш' "
                                    f"WHERE server_id = {message_guild_id} AND (open == 'Открыта')")
                     base.commit()
                     await message.channel.send(
                         "Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
+                    
                 elif check_lose_or_win == "Lose":
                     cursor.execute(f"UPDATE games SET open = 'Проигрыш' "
                                    f"WHERE server_id = {message_guild_id} AND (open == 'Открыта')")
