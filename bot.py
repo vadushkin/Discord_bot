@@ -213,7 +213,48 @@ async def get_input_of_type(func, message):
             return func(msg.content)
         except ValueError:
             break
+            
+@client.event
+async def on_reaction_add(reaction, user):
+    emoji = reaction.emoji
 
+    if user.bot:
+        return
+
+    if emoji in ['⬇', '⬆', '➡', '⬅']:
+        fixed_channel = client.get_channel(reaction.message.channel.id)
+        message = await fixed_channel.fetch_message(reaction.message.id)
+        base.execute(
+            'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  '
+            'moved BOOLEAN, move BOOLEAN)')
+        base.commit()
+        cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {fixed_channel.guild.id}")
+        records = cursor.fetchone()
+        if records:
+            screen, score, moved, move = game_2048.key_handler(emoji, records[2],
+                                                               records[3], records[4], records[5])
+            check_lose_or_win = game_2048.to_check_win_or_lose(screen)
+            screen, score, moved, move = game_2048.add_new_field(screen, score, moved, move)
+            screen, score, animal_stile = game_2048.prtScreen(screen, score)
+            cursor.execute(
+                f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} "
+                f"WHERE (open == 'Открыта') AND (server_id == {fixed_channel.guild.id})")
+            base.commit()
+            if check_lose_or_win == "Win":
+                cursor.execute(f"UPDATE games SET open = 'Выигрыш' "
+                               f"WHERE server_id = {fixed_channel.guild.id} AND (open == 'Открыта')")
+                base.commit()
+                await message.edit(content="Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
+            elif check_lose_or_win == "Lose":
+                cursor.execute(f"UPDATE games SET open = 'Проигрыш' "
+                               f"WHERE server_id = {fixed_channel.guild.id} AND (open == 'Открыта')")
+                base.commit()
+                await message.edit(content="Score: " + str(
+                    score) + "\n" + animal_stile + "Вы проиграли... Я болел за вас(\nМожете попробовать еще раз!")
+            else:
+                await message.edit(content="Score: " + str(score) + "\n" + animal_stile)
+        else:
+            await fixed_channel.send("Создайте игру с помощью $start_game")
 
 @client.event
 async def on_ready():
@@ -299,20 +340,21 @@ async def on_message(message):
                 
             base.commit()
                 
-        if message_content == '$start_game':
+        if message_content_lower == 'start_game':
             base.execute(
                 'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  '
                 'moved BOOLEAN, move BOOLEAN)')
             base.commit()
             cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
             records = cursor.fetchone()
-            
             if records:
                 screen, score, moved, move = game_2048.key_handler('none', records[2],
                                                                    records[3], records[4], records[5])
                 screen, score, animal_stile = game_2048.prtScreen(screen, score)
-                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
-                
+                message = await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+                reactions = ['⬅', '⬆', '⬇', '➡']
+                for reaction in reactions:
+                    await message.add_reaction(reaction)
             else:
                 cursor.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)",
                                (int(message_guild_id), str('Открыта'), screen_for_game, int(0), True, True))
@@ -322,68 +364,31 @@ async def on_message(message):
                 cursor.execute(f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} "
                                f"WHERE (open == 'Открыта') AND (server_id == {message_guild_id})")
                 base.commit()
-                await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+                message = await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
+                reactions = ['⬇', '⬆', '➡', '⬅']
+                for reaction in reactions:
+                    await message.add_reaction(reaction)
 
-        if message_content == '$stat_games':
+        if message_content_lower == 'stat_games':
             base.execute(
                 'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  '
                 'moved BOOLEAN, move BOOLEAN)')
             base.commit()
             cursor.execute(f"SELECT * FROM games WHERE server_id = {message_guild_id} ORDER BY score DESC LIMIT 10")
             records = cursor.fetchall()
-            
             if records:
-                masters = "Максимум очков в игре: \n"
-                for item in records:
-                    masters += "Игра: " + str(item[1]) + ", " + "Очки: " + str(item[3]) + "\n"
+                masters = ""
+                for number, item in enumerate(records, start=1):
+                    masters += f"Игра №{number}:\n" + "Статус: " + str(item[1]) + ". " + "Очки: " + str(item[3]) + "\n"
                 cursor.execute(
                     f"SELECT COUNT(*) FROM games WHERE (open == 'Выигрыш') AND server_id = {message_guild_id}")
                 records = cursor.fetchone()
-                winners = "Победы: \n"
-                
+                winners = "Количество побед: "
                 if records:
                     winners += str(records[0])
                 await message.channel.send(masters + winners)
-                
             else:
                 await message.channel.send("Пока что игр не создано")
-
-        if message_content_lower_with_prefix in ['$a', '$w', '$s', '$d']:
-            base.execute(
-                'CREATE TABLE IF NOT EXISTS games (server_id INT, open STRING, screen TEXT, score INT,  '
-                'moved BOOLEAN, move BOOLEAN)')
-            base.commit()
-            cursor.execute(f"SELECT * FROM games WHERE open = 'Открыта' AND server_id = {message_guild_id}")
-            records = cursor.fetchone()
-            
-            if records:
-                screen, score, moved, move = game_2048.key_handler(message_content_lower_with_prefix[1], records[2],
-                                                                   records[3], records[4], records[5])
-                check_lose_or_win = game_2048.to_check_win_or_lose(screen)
-                screen, score, moved, move = game_2048.add_new_field(screen, score, moved, move)
-                screen, score, animal_stile = game_2048.prtScreen(screen, score)
-                cursor.execute(
-                    f"UPDATE games SET screen = '{screen}', score = {score}, moved = {moved}, move = {move} "
-                    f"WHERE (open == 'Открыта') AND (server_id == {message_guild_id})")
-                base.commit()
-                
-                if check_lose_or_win == "Win":
-                    cursor.execute(f"UPDATE games SET open = 'Выигрыш' "
-                                   f"WHERE server_id = {message_guild_id} AND (open == 'Открыта')")
-                    base.commit()
-                    await message.channel.send(
-                        "Score: " + str(score) + "\n" + animal_stile + "Вы выиграли, поздравляю!!!")
-                    
-                elif check_lose_or_win == "Lose":
-                    cursor.execute(f"UPDATE games SET open = 'Проигрыш' "
-                                   f"WHERE server_id = {message_guild_id} AND (open == 'Открыта')")
-                    base.commit()
-                    await message.channel.send("Score: " + str(
-                        score) + "\n" + animal_stile + "Вы проиграли... Я болел за вас( Можете попробовать еще раз!")
-                else:
-                    await message.channel.send("Score: " + str(score) + "\n" + animal_stile)
-            else:
-                await message.channel.send("Создайте игру с помощью $start_game")
 
         if client.user.mentioned_in(message) or random.randint(0, 20) == 10:
             if random.randint(0, 10) == 1:
