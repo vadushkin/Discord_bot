@@ -131,7 +131,7 @@ def key_handler(keypress, screen, score, moved, move):
     else:
         score = score
         
-    if keypress == "d":
+    if keypress == "➡":
         for loops in range(3):
             for row in [1, 4, 7, 10]:
                 for i in range(len(screen[row]) - 2, -1, -1):
@@ -191,7 +191,7 @@ def key_handler(keypress, screen, score, moved, move):
                             score += 2048
                             moved = True
 
-    elif keypress == "a":
+    elif keypress == "⬅":
         for loops in range(3):
             for row in [1, 4, 7, 10]:
                 for i in range(1, len(screen[row])):
@@ -251,7 +251,7 @@ def key_handler(keypress, screen, score, moved, move):
                             score += 2048
                             moved = True
 
-    elif keypress == "s":
+    elif keypress == "⬇":
         for loops in range(3):
             for row in [7, 4, 1]:
                 moved = False
@@ -312,7 +312,7 @@ def key_handler(keypress, screen, score, moved, move):
                             score += 2048
                             moved = True
 
-    elif keypress == "w":
+    elif keypress == "⬆":
         for loops in range(3):
             for row in [4, 7, 10]:
                 moved = False
