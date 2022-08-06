@@ -1,23 +1,24 @@
-from simpledemotivators import Quote
-from smail import *
-from questions import *
-from googletrans import Translator
-from deepface import DeepFace
-from photo_demotivator import servant
-from config import TOKEN
-from pyrandmeme import *
 import time
+import re
 import sqlite3
 import json
 import random
+from smail import *
+from questions import *
+from photo_demotivator import servant
+from config import TOKEN
+import datetime
+import asyncio
+import game_2048
+
+from simpledemotivators import Quote
+from googletrans import Translator
+from deepface import DeepFace
+from pyrandmeme import *
 import discord
 import bs4
 import requests
-import re
-import datetime
 import platform
-import asyncio
-import game_2048
 
 your_channel = 10000000000
 your_server = 10000000000
