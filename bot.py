@@ -1,24 +1,30 @@
-import time
+# Библиотеки Python
+import math
 import re
-import sqlite3
+import time
 import json
 import random
+import sqlite3
+import asyncio
+import datetime
+import platform
+
+# Файлы
+import game_2048
+from photo_demotivator import servant
 from smail import *
 from questions import *
-from photo_demotivator import servant
 from config import TOKEN
-import datetime
-import asyncio
-import game_2048
 
-from simpledemotivators import Quote
-from googletrans import Translator
-from deepface import DeepFace
-from pyrandmeme import *
+# Сторонние библиотеки
 import discord
 import bs4
 import requests
-import platform
+from pyrandmeme import *
+from deepface import DeepFace
+from googletrans import Translator
+from fake_useragent import UserAgent
+from simpledemotivators import Quote
 
 your_channel = 10000000000
 your_server = 10000000000
