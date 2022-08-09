@@ -28,6 +28,7 @@ from simpledemotivators import Quote
 
 your_channel = 10000000000
 your_server = 10000000000
+your_discord_bot_id = '<@your_id_discord>'
 
 if platform.system() == 'Windows':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -325,7 +326,7 @@ async def on_message(message):
             print(f"Сервер: {message_guild_name}, Дата: {time.ctime()}, {message_author} : {message_content}")
 
         if not (message_content[
-                :1] in startswith_word) and not message_author.bot and message_content != '<@"Your discord bot id">':
+                :1] in startswith_word) and not message_author.bot and message_content != your_discord_bot_id:
             
             base.execute('CREATE TABLE IF NOT EXISTS messages (userid INT, content STRING, links INT)')
             base.commit()
